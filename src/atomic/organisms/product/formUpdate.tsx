@@ -6,49 +6,43 @@ import {
   formatDate,
   isValidDate,
   validatorDescription,
-  validatorID,
   validatorLogo,
   validatorName,
 } from '../../../utils/validator';
-import {AddProduct, VerifyId} from '../../../core';
+import {UpdateProduct} from '../../../core';
 import {GlobalStateContext} from '../../../reducer/GlobalState';
 import {PRODUCTS} from '../../../reducer/types';
 import {IProduct} from '../../../interface/global';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 
-type Props = {};
-
-const FormOrganism: React.FC<Props> = () => {
+const FormUpdateOrganism: React.FC<IProduct> = ({
+  id,
+  name,
+  description,
+  logo,
+  date_release,
+}) => {
+  const currentDate = date_release.split('T')[0].split('-').reverse().join('/');
   const {navigate} = useNavigation<NavigationProp<any, any>>();
   const [state, dispatch] = useContext(GlobalStateContext);
-  const currentDate = new Date()
-    .toISOString()
-    .split('T')[0]
-    .split('-')
-    .reverse()
-    .join('/');
-  const [id, setId] = useState<string>('');
-  const [errorId, setErrorId] = useState<any>({valid: true, name: ''});
-  const [name, setName] = useState<string>('');
+  const [nameEdit, setName] = useState<string>(name);
   const [errorName, setErrorName] = useState<any>({valid: true, name: ''});
-  const [description, setDescription] = useState<string>('');
+  const [descriptionEdit, setDescription] = useState<string>(description);
   const [errorDescription, setErrorDescription] = useState<any>({
     valid: true,
     name: '',
   });
-  const [logo, setLogo] = useState<string>('');
+  const [logoEdit, setLogo] = useState<string>(logo);
   const [errorLogo, setErrorLogo] = useState<any>({valid: true, name: ''});
   const [date, setDate] = useState<string>(currentDate);
   const [errorDate, setErrorDate] = useState<any>({valid: true, name: ''});
   const [loading, setLoading] = useState<boolean>(false);
 
   const resetForm = () => {
-    setId('');
     setName('');
     setDescription('');
     setLogo('');
     setDate(currentDate);
-    setErrorId({valid: true, name: ''});
     setErrorName({valid: true, name: ''});
     setErrorDescription({valid: true, name: ''});
     setErrorLogo({valid: true, name: ''});
@@ -72,15 +66,13 @@ const FormOrganism: React.FC<Props> = () => {
   const onProcess = () => {
     setLoading(true);
     const allValid =
-      id !== '' &&
-      errorId.valid &&
-      name !== '' &&
+      nameEdit !== '' &&
       errorName.valid &&
-      description !== '' &&
+      descriptionEdit !== '' &&
       errorDescription.valid &&
-      logo !== '' &&
+      logoEdit !== '' &&
       errorLogo.valid &&
-      date !== '' &&
+      date.length > 9 &&
       errorDate.valid;
 
     if (allValid) {
@@ -89,23 +81,27 @@ const FormOrganism: React.FC<Props> = () => {
         const dateRevision = `${date.split('/')[0]}-${date.split('/')[1]}-${
           parseInt(date.split('/')[2], 10) + 1
         }`;
-        const dataSend: IProduct = {
+        const dataUpdate: IProduct = {
           id,
-          name,
-          description,
-          logo,
+          name: nameEdit,
+          description: descriptionEdit,
+          logo: logoEdit,
           date_release: dateRelease.split('-').reverse().join('-'),
           date_revision: dateRevision.split('-').reverse().join('-'),
         };
 
-        const response = await AddProduct(dataSend);
+        const response = await UpdateProduct(dataUpdate);
 
         if (response.status === 200) {
+          const updateState = state?.products.map(product =>
+            product.id === id ? {...product, ...dataUpdate} : product,
+          );
           dispatch({
             type: PRODUCTS,
-            data: {products: [...state?.products, {...dataSend}]},
+            data: {products: updateState},
           });
         }
+
         resetForm();
         setLoading(false);
         navigate('home');
@@ -120,32 +116,22 @@ const FormOrganism: React.FC<Props> = () => {
       <ScrollView style={styles.fl}>
         <CustomInput
           label="ID"
-          onChangeText={setId}
           value={id}
-          autoCapitalize="none"
-          isValid={errorId.valid}
-          errorName={errorId.name}
-          onBlur={() => {
-            if (validatorID(id)) {
-              (async () => {
-                const data = await VerifyId({id: id});
-                setErrorId({valid: !data, name: 'ID existente'});
-              })();
-            } else {
-              setErrorId({valid: validatorID(id), name: 'ID no válido'});
-            }
-          }}
+          editable={false}
+          disabled={true}
+          isValid={true}
+          errorName=""
         />
         <CustomInput
           label="Nombre"
           onChangeText={setName}
-          value={name}
+          value={nameEdit}
           autoCapitalize="words"
           isValid={errorName.valid}
           errorName={errorName.name}
           onBlur={() =>
             setErrorName({
-              valid: validatorName(name),
+              valid: validatorName(nameEdit),
               name: 'Nombre no válido',
             })
           }
@@ -153,13 +139,13 @@ const FormOrganism: React.FC<Props> = () => {
         <CustomInput
           label="Descripcion"
           onChangeText={setDescription}
-          value={description}
+          value={descriptionEdit}
           autoCapitalize="sentences"
           isValid={errorDescription.valid}
           errorName={errorDescription.name}
           onBlur={() =>
             setErrorDescription({
-              valid: validatorDescription(description),
+              valid: validatorDescription(descriptionEdit),
               name: 'Este campo es requerido!',
             })
           }
@@ -167,13 +153,13 @@ const FormOrganism: React.FC<Props> = () => {
         <CustomInput
           label="Logo"
           onChangeText={setLogo}
-          value={logo}
+          value={logoEdit}
           autoCapitalize="none"
           isValid={errorLogo.valid}
           errorName={errorLogo.name}
           onBlur={() =>
             setErrorLogo({
-              valid: validatorLogo(logo),
+              valid: validatorLogo(logoEdit),
               name: 'Este campo es requerido!',
             })
           }
@@ -214,4 +200,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormOrganism;
+export default FormUpdateOrganism;

@@ -53,3 +53,40 @@ export async function AddProduct(dataJson: IProduct) {
     return {status: 400};
   }
 }
+
+export async function UpdateProduct(dataJson: IProduct) {
+  const url = `${URLBASE}/bp/products`;
+
+  try {
+    const http = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        authorId: '1717781015',
+      },
+      body: JSON.stringify(dataJson),
+    });
+    const data = await http.json();
+    return {status: 200, data};
+  } catch (error) {
+    return {status: 400};
+  }
+}
+
+export async function DeleteProduct({id}: VerifyIdProps) {
+  const url = `${URLBASE}/bp/products?id=${id}`;
+
+  try {
+    const http = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        authorId: '1717781015',
+      },
+    });
+    const data = await http.json();
+    return {status: 200, data};
+  } catch (error) {
+    return {status: 400};
+  }
+}

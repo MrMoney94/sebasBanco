@@ -1,13 +1,19 @@
 import React from 'react';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
 import EditTemplate from '../../templates/product/edit';
 
 const EditScreen = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.fl}>
       <EditTemplate />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  fl: {
+    flex: 1,
+  },
+});
 
 export default EditScreen;

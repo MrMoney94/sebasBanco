@@ -34,7 +34,7 @@ const HomeTemplate = () => {
       {!state?.isLoading ? (
         <ItemListOrganism
           data={product ?? state.products}
-          onPress={(id: string) => console.log(id)}
+          onPress={(data: IProduct) => navigate('product', {data: data})}
         />
       ) : (
         <View style={styles.fl}>

@@ -7,11 +7,11 @@ import {SvgXml} from 'react-native-svg';
 type Props = {
   id: string;
   name: string;
-  onPress: (id: string) => void;
+  onPress: () => void;
 };
 
 export const ItemCard: React.FC<Props> = ({id, name, onPress}) => (
-  <Pressable onPress={() => onPress(id)}>
+  <Pressable onPress={() => onPress()}>
     <View style={styles.container}>
       <View>
         <Text style={styles.fontName}>{name}</Text>

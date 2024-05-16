@@ -1,13 +1,19 @@
 import React from 'react';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
 import ProductTemplate from '../../templates/product/product';
 
 const ProductScreen = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.fl}>
       <ProductTemplate />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  fl: {
+    flex: 1,
+  },
+});
 
 export default ProductScreen;

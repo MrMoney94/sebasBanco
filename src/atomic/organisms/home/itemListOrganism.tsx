@@ -2,15 +2,11 @@ import React from 'react';
 import {View, FlatList, StyleSheet} from 'react-native';
 import {ItemCard} from '../../molecules/home/itemCard';
 import {EmptyList} from '../../molecules/home/emptyList';
-
-interface Data {
-  id: string;
-  name: string;
-}
+import {IProduct} from '../../../interface/global';
 
 type Props = {
-  data: Array<Data>;
-  onPress: (id: string) => void;
+  data: Array<IProduct>;
+  onPress: (data: IProduct) => void;
 };
 
 export const ItemListOrganism: React.FC<Props> = ({data, onPress}) => {
@@ -23,7 +19,7 @@ export const ItemListOrganism: React.FC<Props> = ({data, onPress}) => {
           <ItemCard
             id={item.id}
             name={item.name}
-            onPress={(id: string) => onPress(id)}
+            onPress={() => onPress(item)}
           />
         )}
         ListEmptyComponent={<EmptyList />}
